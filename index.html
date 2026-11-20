@@ -659,16 +659,31 @@
       opacity: 1;
     }
 
-    /* Floating Bottom-Center Close Button */
+    /* Floating Bottom-Center Close Button (Solid Black, No White Outline) */
     #floating-close-btn {
       position: fixed;
       left: 50%;
       bottom: max(20px, env(safe-area-inset-bottom, 20px));
       z-index: 120;
+      background-color: #000000 !important;
+      color: #FFFFFF !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
       transform: translate(-50%, 24px) scale(0.92);
       opacity: 0;
       pointer-events: none;
       transition: transform 0.42s var(--ease-expo), opacity 0.3s ease, background-color 0.3s ease;
+    }
+
+    #floating-close-btn:hover {
+      background-color: #18181B !important;
+    }
+
+    #floating-close-btn:focus,
+    #floating-close-btn:focus-visible {
+      outline: none !important;
+      border: none !important;
     }
 
     #floating-close-btn.is-visible {
@@ -858,7 +873,7 @@
 
     <div class="overlay-item max-w-[1360px] w-full mx-auto pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-[12px] t-muted" style="transition-delay: 270ms;">
       <span>Fauzan Zulfa Ramadhan · Portfolio</span>
-      <div class="flex items-center gap-6">
+      <div class="flex flex-wrap items-center gap-6">
         <a
           href="https://www.linkedin.com/in/fauzanzulfar"
           target="_blank"
@@ -866,6 +881,14 @@
           class="arrow-link t-text hover:opacity-65 transition-opacity"
         >
           LinkedIn <span class="arrow-glyph">↗</span>
+        </a>
+        <a
+          href="https://www.instagram.com/fauzanzulfar/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="arrow-link t-text hover:opacity-65 transition-opacity"
+        >
+          Instagram <span class="arrow-glyph">↗</span>
         </a>
         <a
           href="mailto:fauzanzulfar@gmail.com"
@@ -888,12 +911,12 @@
     </div>
   </div>
 
-  <!-- Floating Bottom-Center Close Button (Thumb-Friendly) -->
+  <!-- Floating Bottom-Center Close Button (Solid Black, No Outline) -->
   <button
     id="floating-close-btn"
     type="button"
     aria-label="Close current view"
-    class="t-btn-primary inline-flex items-center gap-2.5 px-6 py-3 rounded-full shadow-xl border t-border font-mono text-[13px] tracking-tight cursor-pointer"
+    class="inline-flex items-center gap-2.5 px-6 py-3 rounded-full font-mono text-[13px] tracking-tight cursor-pointer"
   >
     <span>Close</span>
     <span class="text-[16px] leading-none">×</span>
@@ -1305,6 +1328,15 @@
         </a>
 
         <a
+          href="https://www.instagram.com/fauzanzulfar/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="arrow-link text-[17px] sm:text-[20px] font-medium t-text hover:opacity-65 transition-opacity"
+        >
+          Instagram<span class="arrow-glyph font-mono text-[16px] ml-0.5">↗</span>
+        </a>
+
+        <a
           href="mailto:fauzanzulfar@gmail.com"
           class="arrow-link text-[17px] sm:text-[20px] font-medium t-text hover:opacity-65 transition-opacity"
         >
@@ -1558,6 +1590,16 @@
               <span>LinkedIn · linkedin.com/in/fauzanzulfar</span>
               <span class="arrow-glyph font-mono">↗</span>
             </a>
+
+            <a
+              href="https://www.instagram.com/fauzanzulfar/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="arrow-link flex items-center justify-between border t-border rounded-xl px-4 py-3 t-card text-[13px] font-medium t-text hover:opacity-80 transition-opacity"
+            >
+              <span>Instagram · @fauzanzulfar</span>
+              <span class="arrow-glyph font-mono">↗</span>
+            </a>
           </div>
 
           <!-- Contact Form -->
@@ -1670,7 +1712,42 @@
 
       function init() {
         var rootEl = document.documentElement;
-        var themeSyncListeners = [];
+        var themeToggleBtn = document.getElementById('theme-toggle-btn');
+        var themeToggleIcon = document.getElementById('theme-toggle-icon');
+        var themeToggleLabel = document.getElementById('theme-toggle-label');
+
+        /* --------------------------------------------------------------------
+           1. THEME TOGGLE (LIGHT / DARK MODE)
+           -------------------------------------------------------------------- */
+        function applyTheme(theme) {
+          var isDark = theme === 'dark';
+          rootEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+          if (themeToggleBtn) {
+            themeToggleBtn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+          }
+          if (themeToggleIcon) {
+            themeToggleIcon.textContent = isDark ? '☀' : '☾';
+          }
+          if (themeToggleLabel) {
+            themeToggleLabel.textContent = isDark ? 'Light' : 'Dark';
+          }
+        }
+
+        var savedTheme = safeGetStorage('fauzanzr-theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          applyTheme(savedTheme);
+        } else {
+          applyTheme('light');
+        }
+
+        if (themeToggleBtn) {
+          themeToggleBtn.addEventListener('click', function () {
+            var currentTheme = rootEl.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            var nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(nextTheme);
+            safeSetStorage('fauzanzr-theme', nextTheme);
+          });
+        }
 
         /* --------------------------------------------------------------------
            2. ADAPTIVE DOT-GRID BOUNCING PHOTO SHOWCASE (NO AUTO-IDLE FULLSCREEN)
